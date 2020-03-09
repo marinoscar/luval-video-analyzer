@@ -1,5 +1,7 @@
-﻿using System;
+﻿using luval.video.analyzer.core;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,13 +20,25 @@ namespace luval.video.analyzer
             var arguments = new ConsoleSwitches(args);
 
             RunAction(() => {
-                DoAction(arguments);
+                ParseResponse(arguments);
             }, true);
         }
 
-        static void DoAction(ConsoleSwitches arguments)
+        /// <summary>
+        /// Executes an action on the application
+        /// </summary>
+        /// <param name="arguments"></param>
+        static void ParseResponse(ConsoleSwitches arguments)
         {
-            Console.WriteLine("Hello World");
+            var file = @"C:\Users\ch489gt\Downloads\output.json";
+            var content = File.ReadAllText(file);
+            var indexer = new IndexerOutput(content);
+            var videos = indexer.GetVideos();
+            foreach (var vid in videos)
+            {
+                var i = videos.IndexOf(vid);
+                TranscriptToExcel.SaveTranscript(string.Format("output-{0}.xlsx", i), vid);
+            }
         }
 
         /// <summary>
